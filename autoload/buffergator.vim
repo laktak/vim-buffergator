@@ -148,9 +148,10 @@ let s:buffergator_default_catalog_sort_regime = "bufnum"
 
 " Catalog Display Regimes {{{2
 " ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-let s:buffergator_catalog_display_regimes = ['basename', 'parentdir', 'filepath', 'bufname']
+let s:buffergator_catalog_display_regimes = ['basename', 'condensed', 'parentdir', 'filepath', 'bufname']
 let s:buffergator_catalog_display_regime_desc = {
             \ 'basename' : ["basename", "basename (followed by directory)"],
+            \ 'condensed' : ["condensed", "basename (followed by directory)"],
             \ 'parentdir': ["parentdir", "basename (followed by first parent directory)"],
             \ 'filepath' : ["filepath", "full filepath"],
             \ 'bufname'  : ["bufname", "buffer name"],
@@ -1296,6 +1297,10 @@ function! s:NewBufferCatalogViewer()
                 let l:line .= s:_format_align_left(l:bufinfo.basename, self.max_buffer_basename_len, " ")
                 let l:line .= "  "
                 let l:line .= l:bufinfo.parentdir
+            elseif self.display_regime == "condensed"
+                let l:line .= l:bufinfo.basename
+                let l:line .= ": "
+                let l:line .= l:bufinfo.parentdir
             elseif self.display_regime == "parentdir"
                 let l:line .= s:_format_align_left(l:bufinfo.basename, self.max_buffer_basename_len, " ")
                 let l:line .= "  "
@@ -1655,6 +1660,10 @@ function! s:NewTabCatalogViewer()
                 endif
                 if self.display_regime == "basename"
                     let l:subline .= s:_format_align_left(fnamemodify(l:tabbufname, ":t"), 30, " ")
+                    let l:subline .= fnamemodify(l:tabbufname, ":p:h")
+                elseif self.display_regime == "condensed"
+                    let l:subline .= fnamemodify(l:tabbufname, ":t")
+                    let l:subline .= ": "
                     let l:subline .= fnamemodify(l:tabbufname, ":p:h")
                 elseif self.display_regime == "parentdir"
                     let l:subline .= s:_format_align_left(fnamemodify(l:tabbufname, ":t"), 30, " ")
